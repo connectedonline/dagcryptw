@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Dagcrypt writer</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5f5f5;
+      padding: 30px;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 {
+      color: #333;
+    }
+    input, textarea, button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #0078D7;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005a9e;
+    }
+    #status {
+      margin-top: 20px;
+      background-color: #fff;
+      padding: 15px;
+      border-left: 4px solid #0078D7;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔐 Dagcrypt writer</h1>
+  <textarea id="entry" placeholder="Typ je tekst..."></textarea>
+  <input type="password" id="keyInput" placeholder="Geheime sleutel">
+  <button onclick="encryptAndDownload()">Versleutelen & Downloaden</button>
+  <div id="status"></div>
+
+  <script>
+    function encryptAndDownload() {
+      const text = document.getElementById('entry').value;
+      const key = document.getElementById('keyInput').value;
+      const status = document.getElementById('status');
+
+      if (!text || !key) {
+        alert("Vul zowel tekst als sleutel in.");
+        return;
+      }
+
+      try {
+        const encrypted = CryptoJS.AES.encrypt(text, key).toString();
+        const blob = new Blob([encrypted], { type: 'text/plain' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'text.dagcrypt';
+        link.click();
+
+        status.innerHTML = `<strong>✅ Bestand succesvol versleuteld en gedownload.</strong>`;
+      } catch (err) {
+        status.innerHTML = `<strong>❌ Fout bij versleutelen:</strong> ${err.message}`;
+      }
+    }
+  </script>
+</body>
+</html>
